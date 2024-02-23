@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ColgBusTracking</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="google_maps_key">AIzaSyBNX8FXh5nKWCUJBy4nuZqI0F9Cgw1sGco</string>
+</resources>
