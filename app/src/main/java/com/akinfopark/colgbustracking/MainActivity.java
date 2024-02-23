@@ -4,13 +4,20 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akinfopark.colgbustracking.Utils.GpsTracker;
+import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,14 +35,42 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private List<Marker> allMarkers = new ArrayList<>();
+    private GpsTracker gpsTracker;
+    double latitude = 0.00;
+    double longitude = 0.00;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        getLocation();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    public void getLocation() {
+        gpsTracker = new GpsTracker(MainActivity.this);
+        if (gpsTracker.canGetLocation()) {
+             latitude = gpsTracker.getLatitude();
+             longitude = gpsTracker.getLongitude();
+          /*  tvLatitude.setText(String.valueOf(latitude));
+            tvLongitude.setText(String.valueOf(longitude));*/
+        } else {
+            gpsTracker.showSettingsAlert();
+        }
     }
 
     @Override
@@ -44,9 +79,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         addMarker(new LatLng(8.189463, 77.401532), "Marker 1", "Description 1");
         addMarker(new LatLng(8.188868, 77.408486), "Marker 2", "Description 2");
-        addCustomMarker(new LatLng(8.184196, 77.412609), "Bus Driver", "Custom Description");
+        addCustomMarker(new LatLng(latitude, longitude), "Bus Driver", "Custom Description");
 
-        LatLng centerPoint = new LatLng(8.184196, 77.412609);
+        LatLng centerPoint = new LatLng(latitude, longitude);
         checkMarkersWithinRadius(centerPoint, 1000);
     }
 
@@ -104,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .strokeColor(Color.RED)
                 .strokeWidth(1)
                 .fillColor(Color.parseColor("#7ACD7E78"));
-
 
 
         mMap.addMarker(markerOptions);
