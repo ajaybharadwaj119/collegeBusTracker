@@ -4,5 +4,6 @@
     <string name="password">Password</string>
     <string name="enter_password">Enter Password</string>
     <string name="enter_phone_number">Enter phone number</string>
-    <string name="google_maps_key">AIzaSyBNX8FXh5nKWCUJBy4nuZqI0F9Cgw1sGco</string>
+    <string name="google_maps_key">AIzaSyAIWqiqHo5dCZe4jR95ND5c_wZXS4CmA8g</string>
+    <string name="login_as_student"><u>Login As Student</u></string>
 </resources>

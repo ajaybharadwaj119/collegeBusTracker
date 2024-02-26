@@ -17,8 +17,9 @@
         android:theme="@style/Theme.ColgBusTracking"
         tools:targetApi="31">
         <activity
-            android:name=".FirebaseActivity"
+            android:name=".loginReg.StudentRegActivity"
             android:exported="false" />
+
         <activity
             android:name=".loginReg.LoginActivity"
             android:exported="false" />

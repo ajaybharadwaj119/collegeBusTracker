@@ -1,49 +1,58 @@
 package com.akinfopark.colgbustracking;
 
 public class EmployeeInfo {
+    public String EmpName;
+    public String EmpEmail;
+    public String EmpLat;
+    public String EmpLong;
+    public String EmpBusNum;
+    public String EmpType;
 
-    // string variable for
-    // storing employee name.
-    private String employeeName;
-
-    // string variable for storing
-    // employee contact number
-    private String employeeContactNumber;
-
-    // string variable for storing
-    // employee address.
-    private String employeeAddress;
-
-    // an empty constructor is
-    // required when using
-    // Firebase Realtime Database.
-    public EmployeeInfo() {
-
+    public String getEmpName() {
+        return EmpName;
     }
 
-    // created getter and setter methods
-    // for all our variables.
-    public String getEmployeeName() {
-        return employeeName;
+    public void setEmpName(String empName) {
+        EmpName = empName;
     }
 
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
+    public String getEmpEmail() {
+        return EmpEmail;
     }
 
-    public String getEmployeeContactNumber() {
-        return employeeContactNumber;
+    public void setEmpEmail(String empEmail) {
+        EmpEmail = empEmail;
     }
 
-    public void setEmployeeContactNumber(String employeeContactNumber) {
-        this.employeeContactNumber = employeeContactNumber;
+    public String getEmpLat() {
+        return EmpLat;
     }
 
-    public String getEmployeeAddress() {
-        return employeeAddress;
+    public void setEmpLat(String empLat) {
+        EmpLat = empLat;
     }
 
-    public void setEmployeeAddress(String employeeAddress) {
-        this.employeeAddress = employeeAddress;
+    public String getEmpLong() {
+        return EmpLong;
+    }
+
+    public void setEmpLong(String empLong) {
+        EmpLong = empLong;
+    }
+
+    public String getEmpBusNum() {
+        return EmpBusNum;
+    }
+
+    public void setEmpBusNum(String empBusNum) {
+        EmpBusNum = empBusNum;
+    }
+
+    public String getEmpType() {
+        return EmpType;
+    }
+
+    public void setEmpType(String empType) {
+        EmpType = empType;
     }
 }

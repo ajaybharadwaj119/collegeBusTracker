@@ -1,131 +1,41 @@
 {
   "project_info": {
-    "project_number": "192907549598",
-    "project_id": "petcare-80e19",
-    "storage_bucket": "petcare-80e19.appspot.com"
+    "project_number": "696389492243",
+    "project_id": "bustracker-c6f5b",
+    "storage_bucket": "bustracker-c6f5b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:192907549598:android:a0b292504d9a7ad1f4d48f",
-        "android_client_info": {
-          "package_name": "com.ak.petfoodle"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "192907549598-hdeclv5chll3skbfl9aoaofiihf6f8j7.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBoK9TnVZ8a0GAMLYh6aeF9Oq2sMoVURQE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "192907549598-hdeclv5chll3skbfl9aoaofiihf6f8j7.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:192907549598:android:855c0cb01faa39d4f4d48f",
+        "mobilesdk_app_id": "1:696389492243:android:be3978e317d7f83a23a9e6",
         "android_client_info": {
           "package_name": "com.akinfopark.colgbustracking"
         }
       },
       "oauth_client": [
         {
-          "client_id": "192907549598-hdeclv5chll3skbfl9aoaofiihf6f8j7.apps.googleusercontent.com",
+          "client_id": "696389492243-o4ce3qgpqnjc3qthue272ec16bc9l61k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.akinfopark.colgbustracking",
+            "certificate_hash": "9b24af3ff61ae15012dc7d4a0cf89da0686c11b2"
+          }
+        },
+        {
+          "client_id": "696389492243-mitf6ur5ig74a1vdad7u2dkm8l4edmoh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBoK9TnVZ8a0GAMLYh6aeF9Oq2sMoVURQE"
+          "current_key": "AIzaSyAIWqiqHo5dCZe4jR95ND5c_wZXS4CmA8g"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "192907549598-hdeclv5chll3skbfl9aoaofiihf6f8j7.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:192907549598:android:36f02184190e62eaf4d48f",
-        "android_client_info": {
-          "package_name": "com.akinfopark.pet_care_android"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "192907549598-1tr4hr5grskkfoudnuastug3hhcjkhqv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.akinfopark.pet_care_android",
-            "certificate_hash": "59e07f915f0fd4abdeb5e22e7baffe78db4132ca"
-          }
-        },
-        {
-          "client_id": "192907549598-63d6v98trtraobi6vit4vo6ibem0va7q.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.akinfopark.pet_care_android",
-            "certificate_hash": "a1db92d2eb5e77bfa1fef76b35629883eab998ce"
-          }
-        },
-        {
-          "client_id": "192907549598-8l8unic6cdda941ejt5tr3j314n7a0ki.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.akinfopark.pet_care_android",
-            "certificate_hash": "f1142f3b07ebb9567cb42b25da5c420df31316a1"
-          }
-        },
-        {
-          "client_id": "192907549598-nen8quefkm7q3t2rmh2labsq3h8jgud7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.akinfopark.pet_care_android",
-            "certificate_hash": "c66a614d55073fb74fe454a5ba264fe95436f3a3"
-          }
-        },
-        {
-          "client_id": "192907549598-sqv88ja80qcsrafuul70vng8ukbe8pn4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.akinfopark.pet_care_android",
-            "certificate_hash": "167a4d67bef3831d26d46ffc46fd1106c71be043"
-          }
-        },
-        {
-          "client_id": "192907549598-hdeclv5chll3skbfl9aoaofiihf6f8j7.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBoK9TnVZ8a0GAMLYh6aeF9Oq2sMoVURQE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "192907549598-hdeclv5chll3skbfl9aoaofiihf6f8j7.apps.googleusercontent.com",
+              "client_id": "696389492243-mitf6ur5ig74a1vdad7u2dkm8l4edmoh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
