@@ -17,9 +17,11 @@
         android:theme="@style/Theme.ColgBusTracking"
         tools:targetApi="31">
         <activity
+            android:name=".loginReg.DriverRegActivity"
+            android:exported="false" />
+        <activity
             android:name=".loginReg.StudentRegActivity"
             android:exported="false" />
-
         <activity
             android:name=".loginReg.LoginActivity"
             android:exported="false" />

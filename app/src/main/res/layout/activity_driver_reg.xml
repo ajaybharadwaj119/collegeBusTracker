@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="15dp"
     android:gravity="center_vertical"
     android:orientation="vertical"
+    android:layout_marginHorizontal="15dp"
     tools:context=".loginReg.StudentRegActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Register as Student"
-        android:textColor="@color/black"
+        android:text="Register as Driver"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center"/>
 
     <EditText
         android:id="@+id/tvName"
@@ -27,7 +27,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/edit_shape"
-        android:hint="Enter Name"
+        android:hint="Enter Driver Name"
         android:inputType="textPersonName"
         android:padding="15dp"
         android:textColor="@color/black"
@@ -43,12 +43,14 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/edit_shape"
-        android:hint="Enter Email"
+        android:hint="Enter Driver Email"
         android:inputType="textEmailAddress"
         android:padding="15dp"
         android:textColor="@color/black"
         android:textColorHint="@color/grey"
         android:textSize="14sp" />
+
+
 
 
     <EditText
@@ -67,37 +69,20 @@
         android:textColorHint="@color/grey"
         android:textSize="14sp" />
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/tvBusNum"
+        style="@style/poppins_medium_500"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/edit_shape">
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp" />
-
-    </LinearLayout>
-
-    <!-- <EditText
-         android:id="@+id/tvBusNum"
-         style="@style/poppins_medium_500"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:layout_marginHorizontal="20dp"
-         android:layout_marginTop="10dp"
-         android:layout_marginBottom="10dp"
-         android:background="@drawable/edit_shape"
-         android:hint="Enter Bus Number"
-         android:inputType="textPassword"
-         android:padding="15dp"
-         android:textColor="@color/black"
-         android:textColorHint="@color/grey"
-         android:textSize="14sp" />-->
+        android:background="@drawable/edit_shape"
+        android:hint="Enter Bus Number"
+        android:padding="15dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
+        android:textSize="14sp" />
 
 
     <TextView
@@ -114,6 +99,8 @@
         android:text="Submit"
         android:textColor="@color/white"
         android:textSize="15sp" />
+
+
 
 
     <!-- ProgressBar for loading time -->

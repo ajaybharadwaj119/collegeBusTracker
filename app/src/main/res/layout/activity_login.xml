@@ -116,6 +116,13 @@
             android:layout_height="wrap_content"
             android:text="Register as Student" />
 
+        <TextView
+            android:id="@+id/tvRegDriver"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register as Driver" />
+
     </LinearLayout>
 
 </LinearLayout>
