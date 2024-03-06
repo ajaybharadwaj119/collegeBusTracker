@@ -31,6 +31,7 @@ public class DriverRegActivity extends AppCompatActivity {
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class DriverRegActivity extends AppCompatActivity {
                             binding.progressbar.setVisibility(View.GONE);
                             // if the user created intent to login activity
 
-                            addDataToFirebase(name, email, busNum);
+                            addDataToFirebase(name, email, busNum, password);
                             Intent intent
                                     = new Intent(DriverRegActivity.this,
                                     LoginActivity.class);
@@ -89,7 +90,7 @@ public class DriverRegActivity extends AppCompatActivity {
 
     }
 
-    private void addDataToFirebase(String name, String email, String busNum) {
+    private void addDataToFirebase(String name, String email, String busNum, String password) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("driver").child(name);
@@ -105,9 +106,9 @@ public class DriverRegActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                        token = task.getResult();
                         Log.i("", "" + token);
-                        driverInfo.setDriveFToken("" + token);
+
                     }
                 });
 
@@ -115,6 +116,8 @@ public class DriverRegActivity extends AppCompatActivity {
         driverInfo.setDrivName(name);
         driverInfo.setDrivBusNumber(busNum);
         driverInfo.setDrivNumber(email);
+        driverInfo.setDriveFToken(token);
+        driverInfo.setDrivPassword(password);
 
 
         // Assuming databaseReference is properly initialized elsewhere in your code

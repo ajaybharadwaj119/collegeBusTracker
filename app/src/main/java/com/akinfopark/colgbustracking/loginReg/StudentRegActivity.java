@@ -42,7 +42,7 @@ public class StudentRegActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     private GpsTracker gpsTracker;
     List<String> drivBusNumbers = new ArrayList<>();
-    String email, password, name, lat = "", longe = "", busNum="", type;
+    String email, password, name, lat = "", longe = "", busNum="", token="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +153,7 @@ public class StudentRegActivity extends AppCompatActivity {
                             binding.progressbar.setVisibility(View.GONE);
                             // if the user created intent to login activity
 
-                            addDatatoFirebase(name, email, finalLat, finalLonge, "", busNum);
+                            addDatatoFirebase(name, email, finalLat, finalLonge, "", busNum,password);
                             Intent intent
                                     = new Intent(StudentRegActivity.this,
                                     LoginActivity.class);
@@ -202,7 +202,7 @@ public class StudentRegActivity extends AppCompatActivity {
         binding.spinner.setAdapter(adapter);
     }
 
-    private void addDatatoFirebase(String name, String email, String lat, String longe, String type, String busNum) {
+    private void addDatatoFirebase(String name, String email, String lat, String longe, String type, String busNum,String password) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("student").child(name);
@@ -217,9 +217,9 @@ public class StudentRegActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                        token = task.getResult();
                         Log.i("", "" + token);
-                        employeeInfo.setEmpFcm(""+token);
+                        //
                     }
                 });
 
@@ -232,7 +232,8 @@ public class StudentRegActivity extends AppCompatActivity {
         employeeInfo.setEmpEmail(email);
         employeeInfo.setEmpType(type);
         employeeInfo.setEmpBusNum(busNum);
-
+        employeeInfo.setEmpFcm(token);
+        employeeInfo.setEmpPassword(password);
 
         // Assuming databaseReference is properly initialized elsewhere in your code
         databaseReference.setValue(employeeInfo)

@@ -5,6 +5,15 @@ public class DriverInfo {
     private String DrivNumber;
     private String DrivBusNumber;
     private String DriveFToken;
+    private String DrivPassword;
+
+    public String getDrivPassword() {
+        return DrivPassword;
+    }
+
+    public void setDrivPassword(String drivPassword) {
+        DrivPassword = drivPassword;
+    }
 
     public String getDriveFToken() {
         return DriveFToken;

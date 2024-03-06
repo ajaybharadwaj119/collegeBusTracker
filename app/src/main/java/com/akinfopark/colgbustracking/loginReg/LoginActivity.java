@@ -10,18 +10,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.akinfopark.colgbustracking.EmployeeInfo;
 import com.akinfopark.colgbustracking.MainActivity;
 import com.akinfopark.colgbustracking.databinding.ActivityLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class LoginActivity extends AppCompatActivity {
 
     ActivityLoginBinding binding;
     private FirebaseAuth mAuth;
+    FirebaseDatabase firebaseDatabase;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,12 @@ public class LoginActivity extends AppCompatActivity {
         binding.tvRegDriver.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, DriverRegActivity.class);
             startActivity(intent);
+        });
+
+        binding.tvTest.setOnClickListener(v -> {
+          //  testFun();
+            //Toast.makeText(this, "Ajay Test", Toast.LENGTH_SHORT).show();
+            searchEmail("test123@gmail.com");
         });
 
         FirebaseMessaging.getInstance().getToken()
@@ -60,6 +75,71 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public void searchEmail(String email) {
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("student");
+
+        Query query = mDatabase.orderByChild("empEmail").equalTo(email);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        // Get the object that contains the email
+                        // Here you can perform any necessary actions with the found data
+                        // For example, printing the email address
+                        String empEmail = snapshot.child("empEmail").getValue(String.class);
+                        String empName = snapshot.child("employeeName").getValue(String.class);
+                        Toast.makeText(LoginActivity.this, ""+empName, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    System.out.println("Email not found.");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("Error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    void testFun() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference employeeInfoRef = firebaseDatabase.getReference("EmployeeInfo");
+
+// Attach a ValueEventListener to the reference
+        employeeInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method will be called once with the initial data from the database.
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Loop through each child node under the reference
+                    // Here, snapshot will represent each child node
+                    // You can access the data within each child node using getValue() method
+                    EmployeeInfo employeeInfo = snapshot.getValue(EmployeeInfo.class);
+
+                    // Now you can access the properties of the EmployeeInfo object
+                    String empName = employeeInfo.getEmployeeName();
+                    String empEmail = employeeInfo.getEmpEmail();
+                    String empLat = employeeInfo.getEmpLat();
+                    String empLong = employeeInfo.getEmpLong();
+                    String empBusNum = employeeInfo.getEmpBusNum();
+                    String empType = employeeInfo.getEmpType();
+
+                    // Do something with the retrieved data
+                    // For example, you can log it or display it in your app
+                    Log.d("EmployeeInfo", "Name: " + empName + ", Email: " + empEmail + ", Latitude: " + empLat + ", Longitude: " + empLong + ", Bus Number: " + empBusNum + ", Type: " + empType);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle potential errors
+                Log.e("Firebase", "Error reading data: " + databaseError.getMessage());
+            }
+        });
+
+    }
 
     private void loginUserAccount() {
 

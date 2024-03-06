@@ -11,6 +11,15 @@ public class EmployeeInfo {
     private String empType;
     private String empBusNum;
     private String empFcm;
+    private String empPassword;
+
+    public String getEmpPassword() {
+        return empPassword;
+    }
+
+    public void setEmpPassword(String empPassword) {
+        this.empPassword = empPassword;
+    }
 
     public String getEmpFcm() {
         return empFcm;
