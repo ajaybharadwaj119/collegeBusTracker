@@ -41,6 +41,25 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+      <!--  <service
+            android:name=".Utils.FirebaseMessageReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>-->
+
+        <receiver
+            android:name=".Utils.NotificationReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="your_notification_action" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>
