@@ -1,9 +1,14 @@
 package com.akinfopark.colgbustracking.loginReg;
 
+import static androidx.constraintlayout.motion.widget.Debug.getLocation;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +18,7 @@ import android.widget.Toast;
 import com.akinfopark.colgbustracking.EmployeeInfo;
 import com.akinfopark.colgbustracking.MainActivity;
 import com.akinfopark.colgbustracking.databinding.ActivityLoginBinding;
+import com.akinfopark.colgbustracking.firebase.NotificationManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,12 +31,15 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+
 public class LoginActivity extends AppCompatActivity {
 
     ActivityLoginBinding binding;
     private FirebaseAuth mAuth;
     FirebaseDatabase firebaseDatabase;
     private DatabaseReference mDatabase;
+    String token="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
+
+        requestLocationPermission();
 
         binding.tvRegStd.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, StudentRegActivity.class);
@@ -52,7 +63,13 @@ public class LoginActivity extends AppCompatActivity {
         binding.tvTest.setOnClickListener(v -> {
           //  testFun();
             //Toast.makeText(this, "Ajay Test", Toast.LENGTH_SHORT).show();
-            searchEmail("test123@gmail.com");
+           // searchEmail("test123@gmail.com");
+            try {
+                NotificationManager.callNotifAPI();
+            } catch (JSONException e) {
+
+            }
+            //  sendNotification(token,"Test","Test body");
         });
 
         FirebaseMessaging.getInstance().getToken()
@@ -64,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                        token = task.getResult();
                         Log.i("fcm Token ", "" + token);
                     }
                 });
@@ -102,6 +119,32 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    private static final int REQUEST_LOCATION_PERMISSION = 1; // Request code
+
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        } else {
+            // Permission already granted, proceed with location access
+            getLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation(); // Permission granted, access location
+            } else {
+                // Handle permission denied case (e.g., show explanation)
+            }
+        }
+    }
+
 
     void testFun() {
         firebaseDatabase = FirebaseDatabase.getInstance();

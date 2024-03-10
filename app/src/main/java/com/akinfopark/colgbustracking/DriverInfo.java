@@ -7,6 +7,25 @@ public class DriverInfo {
     private String DriveFToken;
     private String DrivPassword;
 
+    private String DrivLat;
+    private String DrivLong;
+
+    public String getDrivLat() {
+        return DrivLat;
+    }
+
+    public void setDrivLat(String drivLat) {
+        DrivLat = drivLat;
+    }
+
+    public String getDrivLong() {
+        return DrivLong;
+    }
+
+    public void setDrivLong(String drivLong) {
+        DrivLong = drivLong;
+    }
+
     public String getDrivPassword() {
         return DrivPassword;
     }

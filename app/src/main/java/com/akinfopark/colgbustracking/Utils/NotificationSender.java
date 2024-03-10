@@ -1,30 +1,53 @@
 package com.akinfopark.colgbustracking.Utils;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
 
-import androidx.core.app.NotificationCompat;
+import org.json.JSONObject;
 
-import com.akinfopark.colgbustracking.R;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.MediaType;
 
 public class NotificationSender {
-    private static final String NOTIFICATION_ACTION = "your_notification_action";
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public static void sendNotification(Context context, String title, String message) {
-        // Create an Intent with the notification action
-        Intent intent = new Intent(NOTIFICATION_ACTION);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_id")
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, builder.build());
+    public static void sendNotification(final String serverKey, final String body, final String title) {
+        Log.i("Keys", "server key = " + serverKey + "||   body =" + body + " ||  title = " + title);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    JSONObject json = new JSONObject();
+                    JSONObject notifJson = new JSONObject();
+                    JSONObject dataJson = new JSONObject();
+                    notifJson.put("text", body);
+                    notifJson.put("title", title);
+                    notifJson.put("priority", "high");
+                    dataJson.put("customId", "02");
+                    dataJson.put("badge", 1);
+                    dataJson.put("alert", "Alert");
+                    json.put("notification", notifJson);
+                    json.put("data", dataJson);
+                    json.put("to", "/topics/topic");
+                    RequestBody requestBody = RequestBody.create(JSON, json.toString());
+                    Request request = new Request.Builder()
+                            .header("Authorization", "key=" + serverKey)
+                            .url("https://fcm.googleapis.com/fcm/send")
+                            .post(requestBody)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String finalResponse = response.body().string();
+                    Log.i("NotificationSender", finalResponse);
+                } catch (Exception e) {
+                    Log.e("NotificationSender", "Error sending notification", e);
+                }
+                return null;
+            }
+        }.execute();
     }
+
 }

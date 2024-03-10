@@ -32,6 +32,7 @@ public class DriverRegActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     String token = "";
+    String drivLat = "", drivLong = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,8 @@ public class DriverRegActivity extends AppCompatActivity {
                 });
 
         // Set the values using setter methods
+        driverInfo.setDrivLat(drivLat);
+        driverInfo.setDrivLong(drivLong);
         driverInfo.setDrivName(name);
         driverInfo.setDrivBusNumber(busNum);
         driverInfo.setDrivNumber(email);

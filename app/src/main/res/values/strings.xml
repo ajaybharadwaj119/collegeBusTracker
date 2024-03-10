@@ -6,4 +6,6 @@
     <string name="enter_phone_number">Enter phone number</string>
     <string name="google_maps_key">AIzaSyAIWqiqHo5dCZe4jR95ND5c_wZXS4CmA8g</string>
     <string name="login_as_student"><u>Login As Student</u></string>
+    <string name="firebase_token">firebase_token</string>
+    <string name="firebase_auth">AAAAoiQMXhM:APA91bHY81Ly3hB5dADg8eqB1a6wT7zbqtdqFLYVhykXgpmDDUZ3E7HAt7rIvbg22SbjQaCMp40OCRXf4ri1oinBfKOrGCsfhxtQtH_Ay-Top-j6jTXnvCzi6AvrVx8CO3YUOuIYdfh7</string>
 </resources>
