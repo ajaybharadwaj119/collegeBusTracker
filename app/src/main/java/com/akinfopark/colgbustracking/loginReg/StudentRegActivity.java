@@ -54,7 +54,20 @@ public class StudentRegActivity extends AppCompatActivity {
         binding.btnregister.setOnClickListener(v -> {
             registerNewUser();
         });
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
 
+                        // Get new FCM registration token
+                        token = task.getResult();
+                        Log.i("", "" + token);
+                        //
+                    }
+                });
 
         databaseReference= FirebaseDatabase.getInstance().getReference().child("driver");
 
@@ -208,20 +221,7 @@ public class StudentRegActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("student").child(name);
         EmployeeInfo employeeInfo = new EmployeeInfo(); // Create a new instance of EmployeeInfo
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            return;
-                        }
 
-                        // Get new FCM registration token
-                        token = task.getResult();
-                        Log.i("", "" + token);
-                        //
-                    }
-                });
 
         // Set the values using setter methods
         employeeInfo.setEmployeeName(name);

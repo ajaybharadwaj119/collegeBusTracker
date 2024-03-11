@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/login_as_student"
+            android:text="Login"
             android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -106,13 +106,28 @@
             android:backgroundTint="@color/black_50"
             android:gravity="center"
             android:padding="15dp"
-            android:text="Login"
+            android:text="@string/login_as_student"
             android:textColor="@color/white"
             android:textSize="15sp" />
 
+
+        <TextView
+            android:id="@+id/tvLoginDriv"
+            style="@style/poppins_medium_500"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/edit_shape"
+            android:backgroundTint="@color/black_50"
+            android:gravity="center"
+            android:padding="15dp"
+            android:text="Login as driver"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
         <TextView
             android:id="@+id/tvRegStd"
             android:padding="10dp"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Register as Student" />

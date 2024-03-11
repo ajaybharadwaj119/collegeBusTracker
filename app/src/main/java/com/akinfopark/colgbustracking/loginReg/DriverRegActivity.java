@@ -42,6 +42,21 @@ public class DriverRegActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        token = task.getResult();
+                        Log.i("", "" + token);
+
+                    }
+                });
+
         binding.btnregister.setOnClickListener(v -> {
             regDrive();
         });
@@ -98,20 +113,7 @@ public class DriverRegActivity extends AppCompatActivity {
 
         DriverInfo driverInfo = new DriverInfo();
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            return;
-                        }
 
-                        // Get new FCM registration token
-                        token = task.getResult();
-                        Log.i("", "" + token);
-
-                    }
-                });
 
         // Set the values using setter methods
         driverInfo.setDrivLat(drivLat);
