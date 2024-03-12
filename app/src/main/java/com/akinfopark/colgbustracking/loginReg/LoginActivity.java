@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.akinfopark.colgbustracking.EmployeeInfo;
 import com.akinfopark.colgbustracking.MainActivity;
+import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityLoginBinding;
 import com.akinfopark.colgbustracking.firebase.NotificationManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseDatabase firebaseDatabase;
     private DatabaseReference mDatabase;
-    String token="";
+    String token="",name="",number="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,10 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.tvLogin.setOnClickListener(v -> {
             loginUserAccount();
+        });
+
+        binding.tvLoginDriv.setOnClickListener(v->{
+            loginUserDrivAccount();
         });
 
     }
@@ -175,7 +180,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Do something with the retrieved data
                     // For example, you can log it or display it in your app
-                    Log.d("EmployeeInfo", "Name: " + empName + ", Email: " + empEmail + ", Latitude: " + empLat + ", Longitude: " + empLong + ", Bus Number: " + empBusNum + ", Type: " + empType);
+                    Log.d("EmployeeInfo", "Name: " + empName + ", Email: "
+                            + empEmail + ", Latitude: " + empLat + ", Longitude: "
+                            + empLong + ", Bus Number: " + empBusNum + ", Type: " + empType);
                 }
             }
 
@@ -186,6 +193,65 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void loginUserDrivAccount() {
+
+        // Take the value of two edit texts in Strings
+        String email, password;
+        email = binding.edtEmail.getText().toString();
+        password = binding.edtPass.getText().toString();
+
+        // validations for input email and password
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(),
+                            "Please enter email!!",
+                            Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(),
+                            "Please enter password!!",
+                            Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        // signin existing user
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(
+                                    @NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(),
+                                                    "Login successful!!",
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+
+                                    MyPrefs.getInstance(getApplicationContext()).putString("login","driver");
+
+                                    // hide the progress bar
+
+                                    // if sign-in is successful
+                                    // intent to home activity
+                                    Intent intent
+                                            = new Intent(LoginActivity.this,
+                                            MainActivity.class);
+                                    startActivity(intent);
+                                } else {
+
+                                    // sign-in failed
+                                    Toast.makeText(getApplicationContext(),
+                                                    "Login failed!!",
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            }
+                        });
     }
 
     private void loginUserAccount() {
@@ -225,6 +291,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     Toast.LENGTH_LONG)
                                             .show();
 
+                                    MyPrefs.getInstance(getApplicationContext()).putString("login","student");
                                     // hide the progress bar
 
                                     // if sign-in is successful
