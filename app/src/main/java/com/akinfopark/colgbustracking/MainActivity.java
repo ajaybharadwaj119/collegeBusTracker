@@ -28,6 +28,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     double latitude = 0.00;
     double longitude = 0.00;
     ActivityMainBinding binding;
-
+    private DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("student");
+
     }
 
     public void getLocation() {
@@ -77,12 +85,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
-        addMarker(new LatLng(8.189463, 77.401532), "Marker 1", "Description 1");
+        //addMarker(new LatLng(8.189463, 77.401532), "Marker 1", "Description 1");
         addMarker(new LatLng(8.188868, 77.408486), "Marker 2", "Description 2");
         addCustomMarker(new LatLng(latitude, longitude), "Bus Driver", "Custom Description");
 
         LatLng centerPoint = new LatLng(latitude, longitude);
         checkMarkersWithinRadius(centerPoint, 1000);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                    String employeeName = studentSnapshot.child("employeeName").getValue(String.class);
+                    String empLat = studentSnapshot.child("empLat").getValue(String.class);
+                    String empLong = studentSnapshot.child("empLong").getValue(String.class);
+
+                    if (employeeName != null && empLat != null && empLong != null) {
+                        double latitude = Double.parseDouble(empLat);
+                        double longitude = Double.parseDouble(empLong);
+                        LatLng location = new LatLng(latitude, longitude);
+                        addMarker(location, employeeName, "Description 1");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+            }
+        });
     }
 
     private void checkMarkersWithinRadius(LatLng centerPoint, double radius) {

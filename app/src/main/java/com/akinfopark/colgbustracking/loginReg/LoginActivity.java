@@ -61,9 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        binding.tvLoginDriv.setOnClickListener(v->{
-
-        });
 
         binding.tvTest.setOnClickListener(v -> {
           //  testFun();
