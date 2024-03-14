@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     double longitude = 0.00;
     ActivityMainBinding binding;
     private DatabaseReference databaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void getLocation() {
         gpsTracker = new GpsTracker(MainActivity.this);
         if (gpsTracker.canGetLocation()) {
-             latitude = gpsTracker.getLatitude();
-             longitude = gpsTracker.getLongitude();
+            latitude = gpsTracker.getLatitude();
+            longitude = gpsTracker.getLongitude();
           /*  tvLatitude.setText(String.valueOf(latitude));
             tvLongitude.setText(String.valueOf(longitude));*/
         } else {
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         //addMarker(new LatLng(8.189463, 77.401532), "Marker 1", "Description 1");
-        addMarker(new LatLng(8.188868, 77.408486), "Marker 2", "Description 2");
+        //   addMarker(new LatLng(8.188868, 77.408486), "Marker 2", "Description 2");
         addCustomMarker(new LatLng(latitude, longitude), "Bus Driver", "Custom Description");
 
         LatLng centerPoint = new LatLng(latitude, longitude);
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     String employeeName = studentSnapshot.child("employeeName").getValue(String.class);
                     String empLat = studentSnapshot.child("empLat").getValue(String.class);
                     String empLong = studentSnapshot.child("empLong").getValue(String.class);
-
+                    Log.i("EmpName", employeeName);
                     if (employeeName != null && empLat != null && empLong != null) {
                         double latitude = Double.parseDouble(empLat);
                         double longitude = Double.parseDouble(empLong);
