@@ -5,5 +5,7 @@
     <color name="black_50">#3A3C3F</color>
     <color name="grey_50">#E6E8F0</color>
     <color name="grey">#949494</color>
+    <color name="yellow">#E9B80A</color>
+    <color name="red">#FF0008</color>
 
 </resources>

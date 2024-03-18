@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseDatabase firebaseDatabase;
     private DatabaseReference mDatabase;
-    String token="",name="",number="";
+    String token = "", name = "", number = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,26 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        binding.tvTest.setOnClickListener(v -> {
+        binding.imgDrivSel.setOnClickListener(v -> {
+            binding.imgDrivSel.setVisibility(View.GONE);
+            binding.imgStdSel.setVisibility(View.VISIBLE);
+            binding.tvLogin.setVisibility(View.VISIBLE);
+            binding.tvLoginDriv.setVisibility(View.GONE);
+            binding.tvRegStd.setVisibility(View.VISIBLE);
+            binding.tvRegDriver.setVisibility(View.GONE);
+        });
+
+        binding.imgStdSel.setOnClickListener(v -> {
+            binding.imgDrivSel.setVisibility(View.VISIBLE);
+            binding.imgStdSel.setVisibility(View.GONE);
+
+            binding.tvLogin.setVisibility(View.GONE);
+            binding.tvLoginDriv.setVisibility(View.VISIBLE);
+            binding.tvRegStd.setVisibility(View.GONE);
+            binding.tvRegDriver.setVisibility(View.VISIBLE);
+        });
+
+      /*  binding.tvTest.setOnClickListener(v -> {
           //  testFun();
             //Toast.makeText(this, "Ajay Test", Toast.LENGTH_SHORT).show();
            // searchEmail("test123@gmail.com");
@@ -73,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
             //  sendNotification(token,"Test","Test body");
-        });
+        });*/
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -93,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             loginUserAccount();
         });
 
-        binding.tvLoginDriv.setOnClickListener(v->{
+        binding.tvLoginDriv.setOnClickListener(v -> {
             loginUserDrivAccount();
         });
 
@@ -113,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                         // For example, printing the email address
                         String empEmail = snapshot.child("empEmail").getValue(String.class);
                         String empName = snapshot.child("employeeName").getValue(String.class);
-                        Toast.makeText(LoginActivity.this, ""+empName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "" + empName, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     System.out.println("Email not found.");
@@ -230,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     Toast.LENGTH_LONG)
                                             .show();
 
-                                    MyPrefs.getInstance(getApplicationContext()).putString("login","driver");
+                                    MyPrefs.getInstance(getApplicationContext()).putString("login", "driver");
 
                                     // hide the progress bar
 
@@ -289,7 +308,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     Toast.LENGTH_LONG)
                                             .show();
 
-                                    MyPrefs.getInstance(getApplicationContext()).putString("login","student");
+                                    MyPrefs.getInstance(getApplicationContext()).putString("login", "student");
                                     // hide the progress bar
 
                                     // if sign-in is successful

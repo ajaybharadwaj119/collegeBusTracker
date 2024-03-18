@@ -4,117 +4,132 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="15dp"
+    android:background="@drawable/new_bus"
     android:gravity="center_vertical"
     android:orientation="vertical"
     tools:context=".loginReg.StudentRegActivity">
 
-    <TextView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Register as Student"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:layout_margin="15dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp">
 
-    <EditText
-        android:id="@+id/tvName"
-        style="@style/poppins_medium_500"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/edit_shape"
-        android:hint="Enter Name"
-        android:inputType="textPersonName"
-        android:padding="15dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/grey"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/email"
-        style="@style/poppins_medium_500"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/edit_shape"
-        android:hint="Enter Email"
-        android:inputType="textEmailAddress"
-        android:padding="15dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/grey"
-        android:textSize="14sp" />
-
-
-    <EditText
-        android:id="@+id/passwd"
-        style="@style/poppins_medium_500"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/edit_shape"
-        android:hint="Enter Password"
-        android:inputType="textPassword"
-        android:padding="15dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/grey"
-        android:textSize="14sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/edit_shape">
-
-        <Spinner
-            android:id="@+id/spinner"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Register as Student"
+                android:textColor="@color/yellow"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-    <!-- <EditText
-         android:id="@+id/tvBusNum"
-         style="@style/poppins_medium_500"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:layout_marginHorizontal="20dp"
-         android:layout_marginTop="10dp"
-         android:layout_marginBottom="10dp"
-         android:background="@drawable/edit_shape"
-         android:hint="Enter Bus Number"
-         android:inputType="textPassword"
-         android:padding="15dp"
-         android:textColor="@color/black"
-         android:textColorHint="@color/grey"
-         android:textSize="14sp" />-->
+            <EditText
+                android:id="@+id/tvName"
+                style="@style/poppins_medium_500"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_shape"
+                android:hint="Enter Name"
+                android:inputType="textPersonName"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/email"
+                style="@style/poppins_medium_500"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_shape"
+                android:hint="Enter Email"
+                android:inputType="textEmailAddress"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                android:textSize="14sp" />
 
 
-    <TextView
-        android:id="@+id/btnregister"
-        style="@style/poppins_medium_500"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="30dp"
-        android:background="@drawable/edit_shape"
-        android:backgroundTint="@color/black_50"
-        android:gravity="center"
-        android:padding="15dp"
-        android:text="Submit"
-        android:textColor="@color/white"
-        android:textSize="15sp" />
+            <EditText
+                android:id="@+id/passwd"
+                style="@style/poppins_medium_500"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_shape"
+                android:hint="Enter Password"
+                android:inputType="textPassword"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                android:textSize="14sp" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edit_shape">
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp" />
+
+            </LinearLayout>
+
+            <!-- <EditText
+                 android:id="@+id/tvBusNum"
+                 style="@style/poppins_medium_500"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginHorizontal="20dp"
+                 android:layout_marginTop="10dp"
+                 android:layout_marginBottom="10dp"
+                 android:background="@drawable/edit_shape"
+                 android:hint="Enter Bus Number"
+                 android:inputType="textPassword"
+                 android:padding="15dp"
+                 android:textColor="@color/black"
+                 android:textColorHint="@color/grey"
+                 android:textSize="14sp" />-->
+
+
+            <TextView
+                android:id="@+id/btnregister"
+                style="@style/poppins_medium_500"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="30dp"
+                android:background="@drawable/edit_shape"
+                android:backgroundTint="@color/yellow"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Submit"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <!-- ProgressBar for loading time -->
     <ProgressBar

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.WindowManager;
 
 import com.akinfopark.colgbustracking.MainActivity;
+import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
 
 public class SplashActivity extends AppCompatActivity {
@@ -37,7 +38,15 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
                 } else {*/
-                intent = new Intent(SplashActivity.this, LoginActivity.class);
+
+                if (MyPrefs.getInstance(getApplicationContext()).getString("login").equalsIgnoreCase("driver")) {
+                    intent = new Intent(SplashActivity.this, MainActivity.class);
+                } else if (MyPrefs.getInstance(getApplicationContext()).getString("login").equalsIgnoreCase("student")) {
+                    intent = new Intent(SplashActivity.this, MainActivity.class);
+                } else {
+                    intent = new Intent(SplashActivity.this, LoginActivity.class);
+                }
+                //  intent = new Intent(SplashActivity.this, LoginActivity.class);
                 //}
                 startActivity(intent);
                 finishAffinity();
