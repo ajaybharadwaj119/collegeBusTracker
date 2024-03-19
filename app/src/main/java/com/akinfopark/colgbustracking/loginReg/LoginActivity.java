@@ -15,12 +15,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.akinfopark.colgbustracking.DriverActivity;
 import com.akinfopark.colgbustracking.EmployeeInfo;
 import com.akinfopark.colgbustracking.MainActivity;
 import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityLoginBinding;
-import com.akinfopark.colgbustracking.firebase.NotificationManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -33,7 +31,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONException;
 
 public class LoginActivity extends AppCompatActivity {
 

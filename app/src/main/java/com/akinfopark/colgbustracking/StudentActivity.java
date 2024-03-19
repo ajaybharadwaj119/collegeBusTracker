@@ -1,11 +1,6 @@
 package com.akinfopark.colgbustracking;
 
-import static com.google.android.gms.maps.model.BitmapDescriptorFactory.*;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromResource;
 
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -13,18 +8,21 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.akinfopark.colgbustracking.Utils.GpsTracker;
+import com.akinfopark.colgbustracking.databinding.ActivityDriverRegBinding;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,7 +41,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class StudentActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private List<Marker> allMarkers = new ArrayList<>();
     private GpsTracker gpsTracker;
@@ -69,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng destinationLatLng = new LatLng(8.202119, 77.449436); // Ending point
     private PlacesClient placesClient;
     private Polyline currentPolyline;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,32 +82,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getLocation();
 
-        // Get a reference to the Firebase database
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-
-        // Navigate to the desired location in the database
-        DatabaseReference colgLatRef = databaseRef.child("settings").child("colgLat");
-
-
-        // Attach a listener to read the data at the desired location
-        colgLatRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Retrieve the data snapshot
-                DataSnapshot dataSnapshot = task.getResult();
-                if (dataSnapshot.exists()) {
-                    // Retrieve the colgLat value
-                    String colgLat = dataSnapshot.getValue(String.class);
-                    Log.d("TAG", "colgLat: " + colgLat);
-
-                    // You can use the colgLat value here
-                } else {
-                    Log.d("TAG", "No such document");
-                }
-            } else {
-                Log.d("TAG", "get failed with ", task.getException());
-            }
-        });
-
         // Initialize Places SDK
         Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
@@ -125,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void getLocation() {
-        gpsTracker = new GpsTracker(MainActivity.this);
+        gpsTracker = new GpsTracker(StudentActivity.this);
         if (gpsTracker.canGetLocation()) {
             latitude = gpsTracker.getLatitude();
             longitude = gpsTracker.getLongitude();
