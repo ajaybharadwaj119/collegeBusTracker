@@ -2,6 +2,8 @@ package com.akinfopark.colgbustracking;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromResource;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -11,13 +13,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.akinfopark.colgbustracking.Utils.CommonFunctions;
 import com.akinfopark.colgbustracking.Utils.GpsTracker;
 import com.akinfopark.colgbustracking.databinding.ActivityDriverRegBinding;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
+import com.akinfopark.colgbustracking.loginReg.LoginActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -66,6 +71,7 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
     private LatLng destinationLatLng = new LatLng(8.202119, 77.449436); // Ending point
     private PlacesClient placesClient;
     private Polyline currentPolyline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +88,13 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
 
         getLocation();
 
+        Bundle bundle = CommonFunctions.getBundle(StudentActivity.this);
+
+        if (bundle != null) {
+
+        }
+
+
         // Initialize Places SDK
         Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
@@ -92,6 +105,44 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("student");
         mapFragment.getMapAsync(this);
+
+
+        binding.imgExit.setOnClickListener(v -> {
+            showYesNoAlert();
+        });
+
+    }
+
+    private void showYesNoAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Are you sure you want to Exit?");
+        AlertDialog alertDialog = builder.create();
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // User clicked Yes button
+                //Toast.makeText(StudentActivity.this, "You clicked Yes", Toast.LENGTH_SHORT).show();
+                // Add your code here to handle Yes button click
+                alertDialog.dismiss();
+                Intent intent = new Intent(StudentActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // User clicked No button
+                //Toast.makeText(StudentActivity.this, "You clicked No", Toast.LENGTH_SHORT).show();
+                // Add your code here to handle No button click
+                alertDialog.dismiss();
+            }
+        });
+
+
+        alertDialog.show();
     }
 
     public void getLocation() {

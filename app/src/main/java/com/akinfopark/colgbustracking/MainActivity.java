@@ -3,10 +3,13 @@ package com.akinfopark.colgbustracking;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.*;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 
 import com.akinfopark.colgbustracking.Utils.GpsTracker;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
+import com.akinfopark.colgbustracking.loginReg.LoginActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -86,32 +90,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getLocation();
 
-        // Get a reference to the Firebase database
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-
-        // Navigate to the desired location in the database
-        DatabaseReference colgLatRef = databaseRef.child("settings").child("colgLat");
-
-
-        // Attach a listener to read the data at the desired location
-        colgLatRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Retrieve the data snapshot
-                DataSnapshot dataSnapshot = task.getResult();
-                if (dataSnapshot.exists()) {
-                    // Retrieve the colgLat value
-                    String colgLat = dataSnapshot.getValue(String.class);
-                    Log.d("TAG", "colgLat: " + colgLat);
-
-                    // You can use the colgLat value here
-                } else {
-                    Log.d("TAG", "No such document");
-                }
-            } else {
-                Log.d("TAG", "get failed with ", task.getException());
-            }
-        });
-
         // Initialize Places SDK
         Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
@@ -122,6 +100,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("student");
         mapFragment.getMapAsync(this);
+
+        binding.imgExit.setOnClickListener(v -> {
+            showYesNoAlert();
+        });
+    }
+
+    private void showYesNoAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Are you sure you want to Exit?");
+        AlertDialog alertDialog = builder.create();
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // User clicked Yes button
+                //Toast.makeText(StudentActivity.this, "You clicked Yes", Toast.LENGTH_SHORT).show();
+                // Add your code here to handle Yes button click
+                alertDialog.dismiss();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // User clicked No button
+                //Toast.makeText(StudentActivity.this, "You clicked No", Toast.LENGTH_SHORT).show();
+                // Add your code here to handle No button click
+                alertDialog.dismiss();
+            }
+        });
+
+
+        alertDialog.show();
     }
 
     public void getLocation() {

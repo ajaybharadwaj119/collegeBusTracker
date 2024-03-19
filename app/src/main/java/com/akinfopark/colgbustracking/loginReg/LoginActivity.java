@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.akinfopark.colgbustracking.EmployeeInfo;
 import com.akinfopark.colgbustracking.MainActivity;
+import com.akinfopark.colgbustracking.StudentActivity;
 import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -111,6 +112,30 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.tvLoginDriv.setOnClickListener(v -> {
             loginUserDrivAccount();
+        });
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        // Navigate to the desired location in the database
+        DatabaseReference settingsRef = databaseRef.child("settings");
+
+
+        // Attach a listener to read the data at the desired location
+        settingsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Retrieve the data snapshot
+                DataSnapshot dataSnapshot = task.getResult();
+                if (dataSnapshot.exists()) {
+                    // Retrieve the colgLat value
+                    String colgLat = dataSnapshot.child("colgLat").getValue(String.class);
+                    Log.d("TAG", "colgLat: " + colgLat);
+
+                    // You can use the colgLat value here
+                } else {
+                    Log.d("TAG", "No such document");
+                }
+            } else {
+                Log.d("TAG", "get failed with ", task.getException());
+            }
         });
 
     }
@@ -252,10 +277,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                     // if sign-in is successful
                                     // intent to home activity
-                                    Intent intent
-                                            = new Intent(LoginActivity.this,
-                                            MainActivity.class);
+
+                                    Bundle bundle = new Bundle();
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    bundle.putString("email", email);
+                                    intent.putExtras(bundle);
                                     startActivity(intent);
+                                    finish();
                                 } else {
 
                                     // sign-in failed
@@ -310,10 +338,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                     // if sign-in is successful
                                     // intent to home activity
-                                    Intent intent
-                                            = new Intent(LoginActivity.this,
-                                            MainActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    Intent intent = new Intent(LoginActivity.this, StudentActivity.class);
+                                    bundle.putString("email", email);
+                                    intent.putExtras(bundle);
                                     startActivity(intent);
+
+                                    finish();
                                 } else {
 
                                     // sign-in failed
