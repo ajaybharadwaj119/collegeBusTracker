@@ -20,8 +20,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akinfopark.colgbustracking.Utils.DialogUtils;
 import com.akinfopark.colgbustracking.Utils.GpsTracker;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
+import com.akinfopark.colgbustracking.databinding.DialogYesNoBinding;
 import com.akinfopark.colgbustracking.loginReg.LoginActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -74,11 +76,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private PlacesClient placesClient;
     private Polyline currentPolyline;
 
+    DialogYesNoBinding yesNoBinding;
+    AlertDialog exitDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        yesNoBinding = DialogYesNoBinding.inflate(getLayoutInflater());
+        exitDialog = DialogUtils.getCustomAlertDialog(MainActivity.this, yesNoBinding.getRoot());
 
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -102,41 +110,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         binding.imgExit.setOnClickListener(v -> {
-            showYesNoAlert();
+            exitDialog.show();
         });
+
+        yesNoBinding.textViewMessage.setText("Are you sure you want to Exit?");
+
+        yesNoBinding.buttonYes.setOnClickListener(v -> {
+            exitDialog.dismiss();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        yesNoBinding.buttonNo.setOnClickListener(v -> {
+            exitDialog.dismiss();
+        });
+
     }
 
-    private void showYesNoAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Confirmation");
-        builder.setMessage("Are you sure you want to Exit?");
-        AlertDialog alertDialog = builder.create();
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                // User clicked Yes button
-                //Toast.makeText(StudentActivity.this, "You clicked Yes", Toast.LENGTH_SHORT).show();
-                // Add your code here to handle Yes button click
-                alertDialog.dismiss();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                // User clicked No button
-                //Toast.makeText(StudentActivity.this, "You clicked No", Toast.LENGTH_SHORT).show();
-                // Add your code here to handle No button click
-                alertDialog.dismiss();
-            }
-        });
-
-
-        alertDialog.show();
-    }
 
     public void getLocation() {
         gpsTracker = new GpsTracker(MainActivity.this);
