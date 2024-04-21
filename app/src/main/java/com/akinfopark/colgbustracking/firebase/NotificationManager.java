@@ -24,14 +24,14 @@ public class NotificationManager {
     private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor(); // Dedicated thread pool
 
-    public static void callNotifAPI() throws JSONException {
+    public static void callNotifAPI(String to) throws JSONException {
         OkHttpClient client = new OkHttpClient();
 
         String serverKey = "AAAAoiQMXhM:APA91bHY81Ly3hB5dADg8eqB1a6wT7zbqtdqFLYVhykXgpmDDUZ3E7HAt7rIvbg22SbjQaCMp40OCRXf4ri1oinBfKOrGCsfhxtQtH_Ay-Top-j6jTXnvCzi6AvrVx8CO3YUOuIYdfh7"; // Replace with your actual server key
         //String to = NotificationManager.getChattingWithToken(); // Assuming method to retrieve token
 
 
-        String to="ej2v-A4nRPyNqvoov5rNTy:APA91bHuysH__7XaOn5Wv0UiIgvcVKcpTb7wofzcmBbhRvVX-_N2Mwz7XlUQYhPaYwZeiQyXfvSqFnfcxyQwApec0KnG_GCQ0tgmqMoKPTHqx6d45Xwqojgdve0_rLwFVi13Vq_1Rf4J";
+      //  String to="ej2v-A4nRPyNqvoov5rNTy:APA91bHuysH__7XaOn5Wv0UiIgvcVKcpTb7wofzcmBbhRvVX-_N2Mwz7XlUQYhPaYwZeiQyXfvSqFnfcxyQwApec0KnG_GCQ0tgmqMoKPTHqx6d45Xwqojgdve0_rLwFVi13Vq_1Rf4J";
        /* JsonObject requestJson = new JsonObject();
         requestJson.add("notification", jsonObject.get("notification"));
         requestJson.add("data", jsonObject.get("data"));

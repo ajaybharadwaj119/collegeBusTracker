@@ -3,6 +3,7 @@ package com.akinfopark.colgbustracking.loginReg;
 import static androidx.constraintlayout.motion.widget.Debug.getLocation;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -15,11 +16,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.akinfopark.colgbustracking.API.UserData;
+import com.akinfopark.colgbustracking.AdminActivity;
 import com.akinfopark.colgbustracking.EmployeeInfo;
 import com.akinfopark.colgbustracking.MainActivity;
 import com.akinfopark.colgbustracking.StudentActivity;
+import com.akinfopark.colgbustracking.Utils.DialogUtils;
 import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityLoginBinding;
+import com.akinfopark.colgbustracking.databinding.DialogAdminLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -39,6 +44,9 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseDatabase firebaseDatabase;
     private DatabaseReference mDatabase;
+
+    DialogAdminLoginBinding adminLoginBinding;
+    AlertDialog dialog;
     String token = "", name = "", number = "";
 
     @Override
@@ -47,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
+
+        adminLoginBinding = DialogAdminLoginBinding.inflate(getLayoutInflater());
+        dialog = DialogUtils.getCustomAlertDialog(this, adminLoginBinding.getRoot());
 
         requestLocationPermission();
 
@@ -126,8 +137,10 @@ public class LoginActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 if (dataSnapshot.exists()) {
                     // Retrieve the colgLat value
-                    String colgLat = dataSnapshot.child("colgLat").getValue(String.class);
-                    Log.d("TAG", "colgLat: " + colgLat);
+                  /*  String colgLat = dataSnapshot.child("colgLat").getValue(String.class);
+                    String colgLon = dataSnapshot.child("colgLong").getValue(String.class);*/
+                   /* MyPrefs.getInstance(getApplicationContext()).putString(UserData.KEY_COLG_LAT, colgLat);
+                    MyPrefs.getInstance(getApplicationContext()).putString(UserData.KEY_COLG_LAT, colgLon);*/
 
                     // You can use the colgLat value here
                 } else {
@@ -138,7 +151,32 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        binding.tvAdmin.setOnClickListener(v -> {
+          /*  Intent intent = new Intent(this, AdminActivity.class);
+            startActivity(intent);*/
+
+            dialog.show();
+        });
+
+        adminLoginBinding.tvLogin.setOnClickListener(v -> {
+            AdName = "admin";
+            AdPassword = "admin@123";
+
+            if (!adminLoginBinding.edtName.getText().toString().equalsIgnoreCase(AdName)){
+                Toast.makeText(this, "Invalid Admin user name or password", Toast.LENGTH_SHORT).show();
+            } else if (!adminLoginBinding.edtpassword.getText().toString().equalsIgnoreCase(AdPassword)) {
+                Toast.makeText(this, "Invalid Admin user name or password", Toast.LENGTH_SHORT).show();
+            }else {
+                MyPrefs.getInstance(getApplicationContext()).putString("login","admin");
+                Intent intent = new Intent(this, AdminActivity.class);
+                startActivity(intent);
+            }
+
+        });
+
     }
+
+    String AdName = "", AdPassword = "";
 
     public void searchEmail(String email) {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("student");
@@ -277,7 +315,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     // if sign-in is successful
                                     // intent to home activity
-
+                                    MyPrefs.getInstance(getApplicationContext()).putString("DrivEmail", email);
                                     Bundle bundle = new Bundle();
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     bundle.putString("email", email);
@@ -335,12 +373,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                     MyPrefs.getInstance(getApplicationContext()).putString("login", "student");
                                     // hide the progress bar
-
+                                    MyPrefs.getInstance(getApplicationContext()).putString("email", email);
                                     // if sign-in is successful
                                     // intent to home activity
                                     Bundle bundle = new Bundle();
                                     Intent intent = new Intent(LoginActivity.this, StudentActivity.class);
-                                    bundle.putString("email", email);
+                                    //bundle.putString("email", email);
+
                                     intent.putExtras(bundle);
                                     startActivity(intent);
 

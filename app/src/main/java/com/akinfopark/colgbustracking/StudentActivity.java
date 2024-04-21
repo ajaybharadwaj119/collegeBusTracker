@@ -2,6 +2,7 @@ package com.akinfopark.colgbustracking;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromResource;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import com.akinfopark.colgbustracking.Utils.CommonFunctions;
 import com.akinfopark.colgbustracking.Utils.DialogUtils;
 import com.akinfopark.colgbustracking.Utils.GpsTracker;
+import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityDriverRegBinding;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
 import com.akinfopark.colgbustracking.databinding.DialogYesNoBinding;
@@ -45,6 +47,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
@@ -67,6 +70,9 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
     private GpsTracker gpsTracker;
     double latitude = 0.00;
     double longitude = 0.00;
+    double colgLat = 0.0, colgLong = 0.0;
+    String busNum = "";
+    Activity activity;
     ActivityMainBinding binding;
     private DatabaseReference databaseReference;
     private LatLng originLatLng = new LatLng(8.166098, 77.397560); // Starting point
@@ -75,11 +81,15 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
     private Polyline currentPolyline;
     DialogYesNoBinding yesNoBinding;
     AlertDialog exitDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        activity = this;
+
         yesNoBinding = DialogYesNoBinding.inflate(getLayoutInflater());
         exitDialog = DialogUtils.getCustomAlertDialog(StudentActivity.this, yesNoBinding.getRoot());
         try {
@@ -89,14 +99,64 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Toast.makeText(StudentActivity.this, "Student", Toast.LENGTH_SHORT).show();
 
-        getLocation();
 
         Bundle bundle = CommonFunctions.getBundle(StudentActivity.this);
 
-        if (bundle != null) {
+        // if (!bundle.getString("email").equalsIgnoreCase("")) {
+        String bundValue = MyPrefs.getInstance(getApplicationContext()).getString("email");
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("student");
 
-        }
+// Query the database to find the student with empEmail "ajay@akinfopark.co"
+        Query query = studentsRef.orderByChild("empEmail").equalTo(bundValue);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Iterate through the results
+                for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                    // Retrieve the empPassword value
+                    busNum = studentSnapshot.child("empBusNum").getValue(String.class);
+                    DatabaseReference driversRef = FirebaseDatabase.getInstance().getReference().child("driver");
+
+// Query the database to find the driver with drivBusNumber "D1"
+                    Query queryBus = driversRef.orderByChild("drivBusNumber").equalTo(busNum);
+                    queryBus.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // Iterate through the results
+                            for (DataSnapshot driverSnapshot : dataSnapshot.getChildren()) {
+                                // Retrieve the drivName value
+                                String drivName = driverSnapshot.child("drivName").getValue(String.class);
+                                double lati = (double) driverSnapshot.child("drivLat").getValue();
+                                double longi = (double) driverSnapshot.child("drivLong").getValue();
+                                // Now you can use the drivName as needed
+                                Log.d("DriverName", "The driver name is: " + drivName + "  " + lati + "  " + longi);
+
+                                addCustomMarker(new LatLng(lati, longi), drivName, "");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle database error
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+            }
+        });
+        //  }
+
+
+        // Assuming you have a DatabaseReference reference to your "driver" node
+
+
+        binding.tvTitle.setText("Student Login");
 
 
         // Initialize Places SDK
@@ -105,9 +165,11 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-      //  mapFragment.getMapAsync(this);
+        //  mapFragment.getMapAsync(this);
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("student");
+
+
         mapFragment.getMapAsync(this);
 
 
@@ -117,6 +179,7 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
         yesNoBinding.textViewMessage.setText("Are you sure you want to Exit?");
         yesNoBinding.buttonYes.setOnClickListener(v -> {
             exitDialog.dismiss();
+            MyPrefs.getInstance(getApplicationContext()).putString("login", "");
             Intent intent = new Intent(StudentActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -129,7 +192,6 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
 
-
     public void getLocation() {
         gpsTracker = new GpsTracker(StudentActivity.this);
         if (gpsTracker.canGetLocation()) {
@@ -140,6 +202,9 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
         } else {
             gpsTracker.showSettingsAlert();
         }
+        LatLng location = new LatLng(latitude, longitude);
+        colgMarker(location, " you", " ");
+
     }
 
     @Override
@@ -148,10 +213,11 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
 
         //addMarker(new LatLng(8.189463, 77.401532), "Marker 1", "Description 1");
         //   addMarker(new LatLng(8.188868, 77.408486), "Marker 2", "Description 2");
-        addCustomMarker(new LatLng(latitude, longitude), "Bus Driver", "Custom Description");
-        originLatLng = new LatLng(latitude, longitude);
-        LatLng centerPoint = new LatLng(latitude, longitude);
-        checkMarkersWithinRadius(centerPoint, 1000);
+        //   addCustomMarker(new LatLng(latitude, longitude), "Bus Driver", "Custom Description");
+        //originLatLng = new LatLng(latitude, longitude);
+        //  LatLng centerPoint = new LatLng(latitude, longitude);
+        // checkMarkersWithinRadius(centerPoint, 1000);
+
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -160,12 +226,17 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
                     String employeeName = studentSnapshot.child("employeeName").getValue(String.class);
                     String empLat = studentSnapshot.child("empLat").getValue(String.class);
                     String empLong = studentSnapshot.child("empLong").getValue(String.class);
-                    Log.i("EmpName", employeeName);
-                    if (employeeName != null && empLat != null && empLong != null) {
+                    String empBusNum = studentSnapshot.child("empBusNum").getValue(String.class); // Get employee's bus number
+
+                    Log.d("EmpInfo", "Employee Name: " + employeeName + ", Bus Number: " + empBusNum); // Logging
+
+                    if (employeeName != null && empLat != null && empLong != null && empBusNum != null) {
                         double latitude = Double.parseDouble(empLat);
                         double longitude = Double.parseDouble(empLong);
                         LatLng location = new LatLng(latitude, longitude);
-                        addMarker(location, employeeName, "Description 1");
+                        //   addMarker(location, employeeName, "");
+
+                        // Check if empBusNum is not null before accessing driver details
                     }
                 }
             }
@@ -176,14 +247,40 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-        mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin"));
-        mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(originLatLng, 12)); // Zoom level can be adjusted as needed
+        getLocation();
+        /*databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                    String employeeName = studentSnapshot.child("employeeName").getValue(String.class);
+                    String empLat = studentSnapshot.child("empLat").getValue(String.class);
+                    String empLong = studentSnapshot.child("empLong").getValue(String.class);
+                    Log.i("EmpName", employeeName);
+                    busNum = studentSnapshot.child("drivBusNumber").getValue(String.class);
+                    if (employeeName != null && empLat != null && empLong != null) {
+                        double latitude = Double.parseDouble(empLat);
+                        double longitude = Double.parseDouble(empLong);
+                        LatLng location = new LatLng(latitude, longitude);
+                        addMarker(location, employeeName, "");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+            }
+        });*/
+
+        // mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin"));
+        //   mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
+        // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(originLatLng, 12)); // Zoom level can be adjusted as needed
 
         // drawRoute(); // Draw the route
 
-        fetchRoute(originLatLng, destinationLatLng);
+        //fetchRoute(originLatLng, destinationLatLng);
     }
+
 
     private void fetchRoute(LatLng origin, LatLng destination) {
         // Use Directions API to fetch route
@@ -339,10 +436,24 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
 
     }
 
+
+    private void colgMarker(LatLng position, String title, String snippet) {
+
+      //  BitmapDescriptor customMarkerIcon = fromResource(R.drawable.lo);
+
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(position)
+                .title(title)
+                .snippet(snippet);
+
+        mMap.addMarker(markerOptions);
+
+    }
+
     private void addCustomMarker(LatLng position, String title, String snippet) {
 
         BitmapDescriptor customMarkerIcon = fromResource(R.drawable.bus_point);
-
+        Log.i("locationValue", position + "");
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(position)
                 .title(title)

@@ -51,6 +51,7 @@ public class StudentRegActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
 
+
         binding.btnregister.setOnClickListener(v -> {
             registerNewUser();
         });
@@ -109,6 +110,20 @@ public class StudentRegActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        binding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Get the selected item from the spinner
+                busNum= parent.getItemAtPosition(position).toString();
+                // Do whatever you want with the selectedBusNumber
+                Toast.makeText(StudentRegActivity.this, "Selected Bus Number: " + busNum, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
     }
 
 
@@ -185,20 +200,6 @@ public class StudentRegActivity extends AppCompatActivity {
                     }
                 });
 
-        binding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Get the selected item from the spinner
-                busNum= parent.getItemAtPosition(position).toString();
-                // Do whatever you want with the selectedBusNumber
-                Toast.makeText(StudentRegActivity.this, "Selected Bus Number: " + busNum, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
 
     }
 

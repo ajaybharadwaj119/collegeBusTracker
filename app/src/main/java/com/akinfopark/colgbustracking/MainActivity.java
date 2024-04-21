@@ -3,6 +3,7 @@ package com.akinfopark.colgbustracking;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -15,6 +16,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import com.akinfopark.colgbustracking.Utils.DialogUtils;
 import com.akinfopark.colgbustracking.Utils.GpsTracker;
+import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
 import com.akinfopark.colgbustracking.databinding.DialogYesNoBinding;
 import com.akinfopark.colgbustracking.loginReg.LoginActivity;
@@ -37,6 +40,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
@@ -46,6 +51,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
@@ -61,7 +67,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -69,8 +77,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GpsTracker gpsTracker;
     double latitude = 0.00;
     double longitude = 0.00;
+    private Handler handler;
+    private Runnable runnable;
+    double ColgLatitude = 0.00;
+    double ColLongitude = 0.00;
     ActivityMainBinding binding;
     private DatabaseReference databaseReference;
+    DatabaseReference coldRef;
     private LatLng originLatLng = new LatLng(8.166098, 77.397560); // Starting point
     private LatLng destinationLatLng = new LatLng(8.202119, 77.449436); // Ending point
     private PlacesClient placesClient;
@@ -87,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         yesNoBinding = DialogYesNoBinding.inflate(getLayoutInflater());
         exitDialog = DialogUtils.getCustomAlertDialog(MainActivity.this, yesNoBinding.getRoot());
+
+        Toast.makeText(MainActivity.this, "Main", Toast.LENGTH_SHORT).show();
+
+        binding.tvTitle.setText("Driver Login");
 
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -125,10 +142,72 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         yesNoBinding.buttonNo.setOnClickListener(v -> {
             exitDialog.dismiss();
         });
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
+        // Navigate to the desired location in the database
+        DatabaseReference settingsRef = databaseRef.child("settings");
+
+
+        // Attach a listener to read the data at the desired location
+        settingsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Retrieve the data snapshot
+                DataSnapshot dataSnapshot = task.getResult();
+                if (dataSnapshot.exists()) {
+                    // Retrieve the colgLat value
+                    double colgLat = (double) dataSnapshot.child("colgLat").getValue();
+                    double colgLon = (double) dataSnapshot.child("colgLong").getValue();
+                    ColgLatitude = colgLat;
+                    ColLongitude = colgLon;
+                    destinationLatLng = new LatLng(ColgLatitude, ColLongitude);
+                    Log.d("ColgValue", colgLon + " | " + colgLat);
+                   /* MyPrefs.getInstance(getApplicationContext()).putString(UserData.KEY_COLG_LAT, colgLat);
+                    MyPrefs.getInstance(getApplicationContext()).putString(UserData.KEY_COLG_LAT, colgLon);*/
+                    //   fetchRoute(originLatLng, destinationLatLng);
+                    // You can use the colgLat value here
+                } else {
+                    Log.d("TAG", "No such document");
+                }
+            } else {
+                Log.d("TAG", "get failed with ", task.getException());
+            }
+        });
+
+        handler = new Handler();
+
+        // Define the function to be called
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                // Call your function here
+
+                updateLocation();
+                Toast.makeText(getApplicationContext(), "hi", Toast.LENGTH_SHORT).show();
+                // Repeat the function call after 20 seconds
+                handler.postDelayed(this, 5000); // 20 seconds in milliseconds
+            }
+        };
+
+        // Call the function for the first time
+        handler.postDelayed(runnable, 20000); // 20 seconds in milliseconds
     }
 
-
+    public void updateLocation() {
+        gpsTracker = new GpsTracker(MainActivity.this);
+        if (gpsTracker.canGetLocation()) {
+            double latitude = gpsTracker.getLatitude();
+            double longitude = gpsTracker.getLongitude();
+            update(latitude, longitude);
+        } else {
+            gpsTracker.showSettingsAlert();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the callback to prevent memory leaks
+        handler.removeCallbacks(runnable);
+    }
     public void getLocation() {
         gpsTracker = new GpsTracker(MainActivity.this);
         if (gpsTracker.canGetLocation()) {
@@ -164,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         double latitude = Double.parseDouble(empLat);
                         double longitude = Double.parseDouble(empLong);
                         LatLng location = new LatLng(latitude, longitude);
-                        addMarker(location, employeeName, "Description 1");
+                        addMarker(location, employeeName, " ");
                     }
                 }
             }
@@ -175,8 +254,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin"));
-        mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
+        //mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin"));
+        // mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(originLatLng, 12)); // Zoom level can be adjusted as needed
 
         // drawRoute(); // Draw the route
@@ -186,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void fetchRoute(LatLng origin, LatLng destination) {
         // Use Directions API to fetch route
+        ColgMarker(destination, "Loyola", "Institute of technology & science");
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(Arrays.asList(Place.Field.LAT_LNG));
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -207,6 +287,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }).addOnFailureListener((exception) -> {
             Toast.makeText(this, "Failed to fetch current location", Toast.LENGTH_SHORT).show();
         });
+    }
+
+
+    void update(double lati, double longi) {
+
+
+        String bundValue = MyPrefs.getInstance(getApplicationContext()).getString("DrivEmail");
+
+
+
+        // Get a DatabaseReference to the "driver" node
+        DatabaseReference driversRef = FirebaseDatabase.getInstance().getReference().child("driver");
+
+// Query the database to find the driver with the specified drivNumber (email)
+        Query query = driversRef.orderByChild("drivNumber").equalTo(bundValue);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot driverSnapshot : dataSnapshot.getChildren()) {
+                    // Get the key of the driver node
+                    String driverKey = driverSnapshot.getKey();
+
+                    // Update the drivLat for the specific driver
+                    DatabaseReference driverRef = driversRef.child(driverKey);
+                    driverRef.child("drivLat").setValue(lati); // Replace newLatValue with the new latitude value you want to set
+                    driverRef.child("drivLong").setValue(longi); // Replace newLatValue with the new latitude value you want to set
+
+                    Log.d("FirebaseUpdate", "drivLat updated successfully");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+            }
+        });
+
+
+
+
     }
 
     private String getDirectionsUrl(LatLng origin, LatLng destination) {
@@ -334,6 +454,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .snippet(snippet);
         Marker marker = mMap.addMarker(markerOptions);
         allMarkers.add(marker);
+        mMap.addMarker(markerOptions);
+
+    }
+
+
+    private void ColgMarker(LatLng position, String title, String snippet) {
+
+        BitmapDescriptor customMarkerIcon = fromResource(R.drawable.fn_colg);
+
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(position)
+                .title(title)
+                .snippet(snippet)
+                .icon(customMarkerIcon);
+
+
         mMap.addMarker(markerOptions);
 
     }
