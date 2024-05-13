@@ -27,6 +27,7 @@ import com.akinfopark.colgbustracking.Utils.GpsTracker;
 import com.akinfopark.colgbustracking.Utils.MyPrefs;
 import com.akinfopark.colgbustracking.databinding.ActivityMainBinding;
 import com.akinfopark.colgbustracking.databinding.DialogYesNoBinding;
+import com.akinfopark.colgbustracking.firebase.NotificationManager;
 import com.akinfopark.colgbustracking.loginReg.LoginActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -85,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DatabaseReference databaseReference;
     DatabaseReference coldRef;
     private LatLng originLatLng = new LatLng(8.166098, 77.397560); // Starting point
-    private LatLng destinationLatLng = new LatLng(8.202119, 77.449436); // Ending point
+    private LatLng destinationLatLng = new LatLng(8.2103573, 77.49147361); // Ending point
     private PlacesClient placesClient;
     private Polyline currentPolyline;
-
+    private ArrayList<Student> studentList = new ArrayList<>();
     DialogYesNoBinding yesNoBinding;
     AlertDialog exitDialog;
 
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         yesNoBinding = DialogYesNoBinding.inflate(getLayoutInflater());
         exitDialog = DialogUtils.getCustomAlertDialog(MainActivity.this, yesNoBinding.getRoot());
 
-        Toast.makeText(MainActivity.this, "Main", Toast.LENGTH_SHORT).show();
 
         binding.tvTitle.setText("Driver Login");
 
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         yesNoBinding.buttonYes.setOnClickListener(v -> {
             exitDialog.dismiss();
+            MyPrefs.getInstance(getApplicationContext()).putString("login", "");
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -182,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Call your function here
 
                 updateLocation();
-                Toast.makeText(getApplicationContext(), "hi", Toast.LENGTH_SHORT).show();
                 // Repeat the function call after 20 seconds
                 handler.postDelayed(this, 5000); // 20 seconds in milliseconds
             }
@@ -202,12 +202,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             gpsTracker.showSettingsAlert();
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // Remove the callback to prevent memory leaks
         handler.removeCallbacks(runnable);
     }
+
     public void getLocation() {
         gpsTracker = new GpsTracker(MainActivity.this);
         if (gpsTracker.canGetLocation()) {
@@ -234,17 +236,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                studentList.clear();
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
                     String employeeName = studentSnapshot.child("employeeName").getValue(String.class);
                     String empLat = studentSnapshot.child("empLat").getValue(String.class);
                     String empLong = studentSnapshot.child("empLong").getValue(String.class);
+                    String empFcm = studentSnapshot.child("empFcm").getValue(String.class);
                     Log.i("EmpName", employeeName);
                     if (employeeName != null && empLat != null && empLong != null) {
                         double latitude = Double.parseDouble(empLat);
                         double longitude = Double.parseDouble(empLong);
                         LatLng location = new LatLng(latitude, longitude);
+
+                        studentList.add(new Student(employeeName, latitude, longitude, empFcm));
                         addMarker(location, employeeName, " ");
                     }
+                }
+
+                try {
+                    checkProximity();
+                } catch (JSONException e) {
+
                 }
             }
 
@@ -280,8 +292,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placesClient.findCurrentPlace(request).addOnSuccessListener((response) -> {
             List<PlaceLikelihood> placeLikelihoods = response.getPlaceLikelihoods();
             if (placeLikelihoods.size() > 0) {
-                LatLng currentLocation = placeLikelihoods.get(0).getPlace().getLatLng();
-                String url = getDirectionsUrl(currentLocation, destination);
+                // LatLng currentLocation = placeLikelihoods.get(0).getPlace().getLatLng();
+                String url = getDirectionsUrl(origin, destination);
                 new FetchDirectionsTask().execute(url);
             }
         }).addOnFailureListener((exception) -> {
@@ -294,7 +306,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         String bundValue = MyPrefs.getInstance(getApplicationContext()).getString("DrivEmail");
-
 
 
         // Get a DatabaseReference to the "driver" node
@@ -323,8 +334,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Handle database error
             }
         });
-
-
 
 
     }
@@ -409,6 +418,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return points;
     }
 
+    private void checkProximity() throws JSONException {
+        for (Student student : studentList) {
+            double distance = calculateDistance(latitude, longitude, student.getEmpLat(), student.getEmpLong());
+            if (distance <= RADIUS) {
+                // Student is within the radius, show their name
+                Toast.makeText(this, student.getEmployeeName() + " is nearby", Toast.LENGTH_SHORT).show();
+
+                NotificationManager.callNotifAPI(student.getEmpFcm());
+            }
+        }
+    }
+
     private void checkMarkersWithinRadius(LatLng centerPoint, double radius) {
         for (Marker marker : allMarkers) {
             double distance = calculateDistance(centerPoint, marker.getPosition());
@@ -416,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Marker is within the specified radius
                 // You can perform any action or display information about this marker
                 Log.d("MarkerWithinRadius", "Marker '" + marker.getTitle() + "' is within the radius.");
-                Toast.makeText(this, "Marker '" + marker.getTitle() + "' is within the radius.", Toast.LENGTH_SHORT).show();
+
             }
         }
     }
@@ -498,4 +519,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel));
 
     }
+
+    private static final int RADIUS = 500;
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        return distance;
+    }
+
+    // Method to check if student is near your current location
+   /* private boolean isNearby(double studentLat, double studentLong) {
+        double distance = calculateDistance(currentLat, currentLong, studentLat, studentLong);
+        return distance <= RADIUS;
+    }*/
+
+    // Method to show toast when student enters inside the circle
+    /*private void showToastIfNeeded(double studentLat, double studentLong) {
+        if (isNearby(studentLat, studentLong)) {
+            Toast.makeText(this, "Student entered inside the circle", Toast.LENGTH_SHORT).show();
+        }
+    }*/
 }

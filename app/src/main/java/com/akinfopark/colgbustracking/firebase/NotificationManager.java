@@ -40,8 +40,8 @@ public class NotificationManager {
         JSONObject json = new JSONObject();
         JSONObject notifJson = new JSONObject();
         JSONObject dataJson = new JSONObject();
-        notifJson.put("text", "body");
-        notifJson.put("title", "title");
+        notifJson.put("text", "Bus is near by you");
+        notifJson.put("title", "Loyola Institute of Tech. & Science");
         notifJson.put("priority", "high");
         dataJson.put("customId", "02");
         dataJson.put("badge", 1);

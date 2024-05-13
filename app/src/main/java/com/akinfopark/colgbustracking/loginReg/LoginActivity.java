@@ -192,8 +192,7 @@ public class LoginActivity extends AppCompatActivity {
                         // For example, printing the email address
                         String empEmail = snapshot.child("empEmail").getValue(String.class);
                         String empName = snapshot.child("employeeName").getValue(String.class);
-                        Toast.makeText(LoginActivity.this, "" + empName, Toast.LENGTH_SHORT).show();
-                    }
+                       }
                 } else {
                     System.out.println("Email not found.");
                 }

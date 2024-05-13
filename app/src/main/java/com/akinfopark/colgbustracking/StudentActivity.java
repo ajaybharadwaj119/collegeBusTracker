@@ -99,7 +99,6 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Toast.makeText(StudentActivity.this, "Student", Toast.LENGTH_SHORT).show();
 
 
         Bundle bundle = CommonFunctions.getBundle(StudentActivity.this);
@@ -248,29 +247,7 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
         });
 
         getLocation();
-        /*databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
-                    String employeeName = studentSnapshot.child("employeeName").getValue(String.class);
-                    String empLat = studentSnapshot.child("empLat").getValue(String.class);
-                    String empLong = studentSnapshot.child("empLong").getValue(String.class);
-                    Log.i("EmpName", employeeName);
-                    busNum = studentSnapshot.child("drivBusNumber").getValue(String.class);
-                    if (employeeName != null && empLat != null && empLong != null) {
-                        double latitude = Double.parseDouble(empLat);
-                        double longitude = Double.parseDouble(empLong);
-                        LatLng location = new LatLng(latitude, longitude);
-                        addMarker(location, employeeName, "");
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle database error
-            }
-        });*/
 
         // mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin"));
         //   mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
@@ -394,8 +371,7 @@ public class StudentActivity extends AppCompatActivity implements OnMapReadyCall
                 // Marker is within the specified radius
                 // You can perform any action or display information about this marker
                 Log.d("MarkerWithinRadius", "Marker '" + marker.getTitle() + "' is within the radius.");
-                Toast.makeText(this, "Marker '" + marker.getTitle() + "' is within the radius.", Toast.LENGTH_SHORT).show();
-            }
+               }
         }
     }
 
